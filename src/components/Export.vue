@@ -38,8 +38,8 @@ onMounted(async () => {
 async function selectChange(value: string) {
   view = await table.getViewMetaById(value)
   const fieldList = await table.getFieldMetaList()
-  fields.value = fieldList.map(item => ({ label: item.name, value: item.id, checked: true }))
-  checkedFields.value = fieldList.map(item => item.id)
+  fields.value = fieldList.map(item => ({ label: item.name, value: item.id }))
+  checkedFields.value = fieldList.filter(item => ['中文', 'Modules', 'Key', 'Page'].includes(item.name) ).map(item => item.id)
   console.log('change ', fieldList)
 }
 
@@ -55,9 +55,9 @@ async function handleExport() {
   console.log('records: ', records)
   for (const i in records) {
     const record = await table.getRecordById(records[i] as string);
-    if (record.fields['fldi408CTK']?.text !== view.name) {
-      continue
-    }
+    // if (record.fields['fldi408CTK']?.text !== view.name) {
+    //   continue
+    // }
     console.log('-----------------')
     let module = 'null'
     let page = 'null'
@@ -65,14 +65,21 @@ async function handleExport() {
     let lang = 'null'
 
     Object.entries(record.fields).forEach(([key, value]) => {
-      if (key === 'fldFRHXUEh') {
-        module = value?.[0]?.text
-      } else if (key === 'flddQpVeXw') {
-        page = value?.[0]?.text
-      } else if (key === 'fld31KGl4E') {
-        langKey = value?.[0]?.text
-      } else if (key === 'fldRoIIvQB') {
-        lang = value?.[0]?.text
+      // console.log('$$$$ ', key, value, checkedFields)
+      if (checkedFields.value.includes(key)) {
+        const field = fields.value.find(item => item.value === key)
+        console.log('field: ', field)
+        if (field?.label === 'Modules') {
+          module = value?.[0]?.text
+        } else if (field?.label === 'Page') {
+          page = value?.[0]?.text
+        } else if (field?.label === 'Key') {
+          langKey = value?.[0]?.text
+        } else if (field?.label === '中文') {
+          lang = value?.[0]?.text
+        } else if (field?.label === '英文') {
+          lang = value?.[0]?.text
+        }
       }
     })
     const piece = {
@@ -82,6 +89,7 @@ async function handleExport() {
         }
       }
     }
+    console.log(piece)
     data = _.merge(data, piece)
   }
 

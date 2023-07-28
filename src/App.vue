@@ -5,8 +5,10 @@
       <div style="padding-bottom: 20px;">
         <a-segmented v-model:value="segmentValue" block :options="segmentItems" />
       </div>
-      <Export v-if="segmentValue === '导出'"></Export>
-      <Import v-if="segmentValue === '导入'"></Import>
+      <div>
+        <Export v-if="segmentValue === '导出'"></Export>
+        <Import v-if="segmentValue === '导入'"></Import>
+      </div>
     </div>
   </main>
 </template>
@@ -18,11 +20,6 @@ import Import from '@/components/Import.vue';
 
 const segmentItems = reactive(['导出', '导入']);
 const segmentValue = ref(segmentItems[0]);
-
-
-function handleImport() {
-
-}
 
 </script>
 
